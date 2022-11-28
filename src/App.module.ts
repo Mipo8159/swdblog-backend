@@ -6,10 +6,10 @@ import {ConnectSequelize} from '@app/config/sequalize.config'
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env',
+      isGlobal: true,
+      envFilePath: `.env.${process.env.NODE_ENV}`,
     }),
     SequelizeModule.forRootAsync({
-      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: ConnectSequelize,
     }),
