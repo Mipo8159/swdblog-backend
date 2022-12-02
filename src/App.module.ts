@@ -6,12 +6,14 @@ import {UserModule} from './modules/user/user.module'
 import {TokenModule} from './modules/token/token.module'
 import {AuthModule} from './modules/auth/auth.module'
 import {APP_PIPE} from '@nestjs/core'
+import {JoiValidation} from './config/joi.config'
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV}`,
+      validationSchema: JoiValidation(),
     }),
     SequelizeModule.forRootAsync({
       inject: [ConfigService],

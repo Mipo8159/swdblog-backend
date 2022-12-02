@@ -1,80 +1,50 @@
-import {Injectable, NotFoundException} from '@nestjs/common'
-import {InjectModel} from '@nestjs/sequelize'
-import {UserModel} from '@app/modules/user/model/user.model'
+import {Injectable} from '@nestjs/common'
+import {UpdateUserDto} from '@app/modules/user/dto/update_user.dto'
+import {UserRepository} from '@app/modules/user/repositories/user.repository'
+import {User} from '@app/modules/user/models/user.model'
 import {CreateUserDto} from './dto/create_user.dto'
-import {sequelize} from '@app/config/sequalize.config'
-import {UpdateUserDto} from './dto/update_user.dto'
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectModel(UserModel)
-    private readonly userRepository: typeof UserModel,
-  ) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
-  // CREATE USER
-  create(dto: CreateUserDto): Promise<UserModel> {
-    const user = this.userRepository.create(dto)
-    return user
+  // SAVE
+  async saveUser(dto: CreateUserDto): Promise<User> {
+    const user = new User()
+    Object.assign(user, dto)
+    return this.userRepository.save(user)
   }
 
-  // FIND USERS
-  async find(): Promise<UserModel[]> {
-    const [users] = await sequelize.query('SELECT * FROM USERS')
-    return users as UserModel[]
+  // FIND ALL
+  findAllUsers(): Promise<User[]> {
+    return this.userRepository.findAll()
   }
 
-  // FIND ONE BY ID
-  async findOne(id: number): Promise<UserModel> {
-    const [user] = await sequelize.query(
-      'SELECT * FROM users WHERE id = :id',
-      {
-        replacements: {id},
-      },
-    )
-    return user[0] as UserModel
+  // FIND BY ID
+  findUserById(id: number): Promise<User> {
+    return this.userRepository.findById(id)
   }
 
-  // FIND ONE BY EMAIL
-  async findByEmail(email: string): Promise<UserModel> {
-    const [user] = await sequelize.query(
-      'SELECT * FROM users WHERE email = :email',
-      {
-        replacements: {email},
-      },
-    )
-    return user[0] as UserModel
+  // FIND BY EMAIL
+  findUserByEmail(email: string): Promise<User> {
+    return this.userRepository.findByEmail(email)
+  }
+
+  // FIND BY USERNAME
+  findUserByUsername(username: string): Promise<User> {
+    return this.userRepository.findByUsername(username)
   }
 
   // UPDATE USER
-  async update(id: number, dto: UpdateUserDto): Promise<UserModel> {
-    const exists = await this.findOne(id)
-    if (!exists) throw new NotFoundException('User not found')
-
-    const [user] = await sequelize.query(
-      'UPDATE users SET username = :username, image_url = :image_url WHERE id = :id',
-      {
-        replacements: {
-          username: dto.username || exists.username,
-          image_url: dto.image_url || exists.image_url,
-          id,
-        },
-      },
-    )
-    return user[0] as UserModel
+  async updateUser(
+    id: number,
+    dto: UpdateUserDto,
+  ): Promise<[affectedCount: number]> {
+    return this.userRepository.updateById(id, dto)
   }
 
   // REMOVE USER
-  async remove(id: number) {
-    const user = await this.findOne(id)
-    if (!user) throw new NotFoundException('User not found')
-
-    const [_rm, removed] = await sequelize.query(
-      'DELETE FROM users WHERE id = :id',
-      {
-        replacements: {id},
-      },
-    )
-    return {_rm, removed}
+  async deleteUser(id: number): Promise<number> {
+    return this.userRepository.deleteById(id)
   }
 }

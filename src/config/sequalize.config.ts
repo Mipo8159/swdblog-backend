@@ -1,10 +1,10 @@
-import {TokenModel} from '@app/modules/token/model/token.model'
-import {UserModel} from '@app/modules/user/model/user.model'
 import {ConfigService} from '@nestjs/config'
 import {SequelizeModuleOptions} from '@nestjs/sequelize'
 import {Sequelize} from 'sequelize-typescript'
 import * as dotenv from 'dotenv'
 import * as fs from 'fs'
+import {User} from '@app/modules/user/models/user.model'
+import {Token} from '@app/modules/token/models/token.model'
 
 // CONNECT TO DATABASE
 export const ConnectSequelize = async (
@@ -16,7 +16,7 @@ export const ConnectSequelize = async (
   username: configService.get<string>('DB_USER'),
   password: configService.get<string>('DB_PASSWORD'),
   database: configService.get<string>('DB_DATABASE'),
-  models: [UserModel, TokenModel],
+  models: [User, Token],
   autoLoadModels: true,
 })
 

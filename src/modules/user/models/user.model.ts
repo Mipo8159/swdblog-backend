@@ -1,12 +1,19 @@
-import {TokenModel} from '@app/modules/token/model/token.model'
 import {Column, DataType, HasOne, Table, Model} from 'sequelize-typescript'
 import {ApiProperty} from '@nestjs/swagger'
+import {Token} from '@app/modules/token/models/token.model'
 
-interface UserCreationArributes {
+export interface IUserAttrs {
+  email: string
   username: string
+  password: string
+  image_url: string | undefined
 }
-@Table({tableName: 'users'})
-export class UserModel extends Model<UserModel, UserCreationArributes> {
+@Table({
+  tableName: 'users',
+  createdAt: 'created_at',
+  updatedAt: 'updated_at',
+})
+export class User extends Model<User, IUserAttrs> {
   @ApiProperty({example: 1, description: 'Unique identificator'})
   @Column({
     type: DataType.INTEGER,
@@ -35,6 +42,6 @@ export class UserModel extends Model<UserModel, UserCreationArributes> {
   @Column({type: DataType.STRING, unique: true})
   image_url: string
 
-  @HasOne(() => TokenModel)
-  token: TokenModel
+  @HasOne(() => Token)
+  token: Token
 }

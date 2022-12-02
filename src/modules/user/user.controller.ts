@@ -1,43 +1,22 @@
-import {
-  Controller,
-  Get,
-  Put,
-  Post,
-  Delete,
-  Body,
-  Param,
-} from '@nestjs/common'
-import {CreateUserDto} from './dto/create_user.dto'
+import {Controller, Get, Put, Delete, Body, Param} from '@nestjs/common'
 import {UpdateUserDto} from './dto/update_user.dto'
-import {UserModel} from './model/user.model'
+import {User} from './models/user.model'
 import {UserService} from './user.service'
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // CREATE USER
-  @Post()
-  create(@Body('user') dto: CreateUserDto) {
-    return this.userService.create(dto)
-  }
-
   // FIND USERS
   @Get()
-  find(): Promise<UserModel[]> {
-    return this.userService.find()
-  }
-
-  // FIND ONE BY EMAIL
-  @Get('email/:email')
-  findByEmail(@Param('email') email: string) {
-    return this.userService.findByEmail(email)
+  find(): Promise<User[]> {
+    return this.userService.findAllUsers()
   }
 
   // FIND ONE BY ID
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<UserModel> {
-    return this.userService.findOne(parseInt(id))
+  findOne(@Param('id') id: string): Promise<User> {
+    return this.userService.findUserById(parseInt(id))
   }
 
   // UPDATE USER
@@ -45,13 +24,13 @@ export class UserController {
   update(
     @Param('id') id: string,
     @Body('user') dto: UpdateUserDto,
-  ): Promise<UserModel> {
-    return this.userService.update(parseInt(id), dto)
+  ): Promise<[affectedCount: number]> {
+    return this.userService.updateUser(parseInt(id), dto)
   }
 
   // REMOVE USER
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.userService.remove(parseInt(id))
+    return this.userService.deleteUser(parseInt(id))
   }
 }

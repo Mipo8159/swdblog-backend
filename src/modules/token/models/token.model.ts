@@ -1,4 +1,4 @@
-import {UserModel} from '@app/modules/user/model/user.model'
+import {User} from '@app/modules/user/models/user.model'
 import {ApiProperty} from '@nestjs/swagger'
 import {
   BelongsTo,
@@ -9,16 +9,13 @@ import {
   ForeignKey,
 } from 'sequelize-typescript'
 
-interface TokenCreationAttributes {
+export interface ITokenAttrs {
   refresh_token: string
   user_id: number
 }
 
 @Table({tableName: 'tokens', createdAt: false, updatedAt: false})
-export class TokenModel extends Model<
-  TokenModel,
-  TokenCreationAttributes
-> {
+export class Token extends Model<Token, ITokenAttrs> {
   @ApiProperty({example: 1, description: 'Unique identificator'})
   @Column({
     type: DataType.INTEGER,
@@ -39,10 +36,10 @@ export class TokenModel extends Model<
     example: 2,
     description: 'Associated user id',
   })
-  @ForeignKey(() => UserModel)
+  @ForeignKey(() => User)
   @Column({type: DataType.INTEGER})
   user_id: number
 
-  @BelongsTo(() => UserModel)
-  user: UserModel
+  @BelongsTo(() => User)
+  user: User
 }
