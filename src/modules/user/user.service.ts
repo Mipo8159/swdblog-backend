@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common'
+import {Injectable, NotFoundException} from '@nestjs/common'
 import {UpdateUserDto} from '@app/modules/user/dto/update_user.dto'
 import {UserRepository} from '@app/modules/user/repositories/user.repository'
 import {User} from '@app/modules/user/models/user.model'
@@ -12,6 +12,7 @@ export class UserService {
   async saveUser(dto: CreateUserDto): Promise<User> {
     const user = new User()
     Object.assign(user, dto)
+
     return this.userRepository.save(user)
   }
 
@@ -21,8 +22,10 @@ export class UserService {
   }
 
   // FIND BY ID
-  findUserById(id: number): Promise<User> {
-    return this.userRepository.findById(id)
+  async findUserById(id: number): Promise<User> {
+    const user = await this.userRepository.findById(id)
+    if (!user) throw new NotFoundException('User not found')
+    return user
   }
 
   // FIND BY EMAIL
@@ -31,20 +34,24 @@ export class UserService {
   }
 
   // FIND BY USERNAME
-  findUserByUsername(username: string): Promise<User> {
-    return this.userRepository.findByUsername(username)
+  async findUserByUsername(username: string): Promise<User> {
+    const user = this.userRepository.findByUsername(username)
+    if (!user) throw new NotFoundException('User not found')
+    return user
   }
 
   // UPDATE USER
-  async updateUser(
-    id: number,
-    dto: UpdateUserDto,
-  ): Promise<[affectedCount: number]> {
-    return this.userRepository.updateById(id, dto)
+  async updateUser(id: number, dto: UpdateUserDto): Promise<User> {
+    const user = await this.findUserById(id)
+    if (!user) throw new NotFoundException('User not found')
+    Object.assign(user, dto)
+    return this.userRepository.save(user)
   }
 
   // REMOVE USER
-  async deleteUser(id: number): Promise<number> {
-    return this.userRepository.deleteById(id)
+  async deleteUser(id: number): Promise<string> {
+    const res = await this.userRepository.deleteById(id)
+    if (res === 0) throw new NotFoundException('User not found')
+    return `user with id ${id} removed`
   }
 }

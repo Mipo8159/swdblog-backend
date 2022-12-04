@@ -17,9 +17,9 @@ export class User extends Model<User, IUserAttrs> {
   @ApiProperty({example: 1, description: 'Unique identificator'})
   @Column({
     type: DataType.INTEGER,
-    unique: true,
     autoIncrement: true,
     primaryKey: true,
+    unique: true,
   })
   id: number
 
@@ -39,7 +39,7 @@ export class User extends Model<User, IUserAttrs> {
     example: 'abcd.s3.amazon.com',
     description: "User's profile image",
   })
-  @Column({type: DataType.STRING, unique: true})
+  @Column({type: DataType.STRING, unique: false, allowNull: true})
   image_url: string
 
   @HasOne(() => Token)

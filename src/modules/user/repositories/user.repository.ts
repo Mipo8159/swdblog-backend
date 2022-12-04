@@ -3,7 +3,7 @@ import {InjectModel} from '@nestjs/sequelize'
 import {ModelCtor} from 'sequelize-typescript'
 import {Op} from 'sequelize'
 import {IRepo} from '@app/shared/interfaces/repository.interface'
-import {IUserAttrs, User} from '@app/modules/user/models/user.model'
+import {User} from '@app/modules/user/models/user.model'
 
 @Injectable()
 export class UserRepository implements IRepo<User> {
@@ -35,17 +35,6 @@ export class UserRepository implements IRepo<User> {
         id: {
           [Op.in]: ids,
         },
-      },
-    })
-  }
-
-  async updateById(
-    id: number,
-    dto: Partial<IUserAttrs>,
-  ): Promise<[affectedCount: number]> {
-    return this.repo.update(dto, {
-      where: {
-        id,
       },
     })
   }

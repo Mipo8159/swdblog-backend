@@ -1,4 +1,4 @@
-import {Module, ValidationPipe} from '@nestjs/common'
+import {MiddlewareConsumer, Module} from '@nestjs/common'
 import {ConfigModule, ConfigService} from '@nestjs/config'
 import {SequelizeModule} from '@nestjs/sequelize'
 import {ConnectSequelize} from '@app/config/sequalize.config'
@@ -7,6 +7,8 @@ import {TokenModule} from './modules/token/token.module'
 import {AuthModule} from './modules/auth/auth.module'
 import {APP_PIPE} from '@nestjs/core'
 import {JoiValidation} from './config/joi.config'
+import {UserMiddleware} from './modules/user/middlewares/user.middleware'
+import {BackendValidationPipe} from './shared/pipes/validation.pipe'
 
 @Module({
   imports: [
@@ -23,13 +25,16 @@ import {JoiValidation} from './config/joi.config'
     UserModule,
     TokenModule,
   ],
+
   providers: [
     {
       provide: APP_PIPE,
-      useValue: new ValidationPipe({
-        whitelist: true,
-      }),
+      useClass: BackendValidationPipe,
     },
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(UserMiddleware).forRoutes('*')
+  }
+}

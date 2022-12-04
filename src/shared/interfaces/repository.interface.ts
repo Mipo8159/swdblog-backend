@@ -7,8 +7,4 @@ export interface IRepo<M extends Model> {
   findAll(): Promise<M[]>
   deleteById(id: number): Promise<number>
   findByIds(ids: number[]): Promise<M[]>
-  updateById(
-    id: number,
-    dto: Partial<Attributes<M>>,
-  ): Promise<[affectedCount: number]>
 }

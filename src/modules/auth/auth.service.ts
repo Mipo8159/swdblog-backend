@@ -1,10 +1,15 @@
-import {BadRequestException, Injectable} from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common'
 import {LoginDto} from './dto/login.dto'
 import {RegisterDto} from './dto/register.dto'
 import * as bcrypt from 'bcrypt'
 import {UserService} from '../user/user.service'
 import {TokenService} from '../token/token.service'
 import {IAuthResponse} from './interfaces/auth.response.interface'
+import {IJwtResponse} from '../token/interfaces/jwt_response.interface'
 
 @Injectable()
 export class AuthService {
@@ -13,12 +18,13 @@ export class AuthService {
     private readonly tokenService: TokenService,
   ) {}
 
+  // REGISTER
   async register(dto: RegisterDto): Promise<IAuthResponse> {
     const {email, username, password, image_url} = dto
 
     /* check email */
     const exists = await this.userService.findUserByEmail(email)
-    if (exists) throw new BadRequestException('Email in taken')
+    if (exists) throw new BadRequestException('Email is taken')
 
     /* hash password */
     const salt = await bcrypt.genSalt()
@@ -38,7 +44,7 @@ export class AuthService {
         id: user.id,
         email: user.email,
       })
-    // await this.tokenService.saveToken(user.id, refresh_token)
+    await this.tokenService.saveToken(user.id, refresh_token)
 
     return {
       user,
@@ -47,6 +53,7 @@ export class AuthService {
     }
   }
 
+  // LOGIN
   async login(dto: LoginDto) {
     /* check user */
     const user = await this.userService.findUserByEmail(dto.email)
@@ -62,6 +69,7 @@ export class AuthService {
         id: user.id,
         email: user.email,
       })
+
     await this.tokenService.saveToken(user.id, refresh_token)
 
     return {
@@ -69,5 +77,24 @@ export class AuthService {
       access_token,
       refresh_token,
     }
+  }
+
+  // LOGOUT
+  logout(refresh_token: string): Promise<string> {
+    if (!refresh_token) throw new UnauthorizedException()
+
+    return this.tokenService.removeToken(refresh_token)
+  }
+
+  // VALIDATE REFRESH TOKEN
+  async refreshAccess(refresh_token: string): Promise<IJwtResponse> {
+    if (!refresh_token) throw new UnauthorizedException()
+
+    const {id, email} = await this.tokenService.validateRefreshToken(
+      refresh_token,
+    )
+    if (!id || !email) throw new UnauthorizedException()
+
+    return this.tokenService.generateTokens({id, email})
   }
 }

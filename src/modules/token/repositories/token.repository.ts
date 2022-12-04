@@ -13,8 +13,8 @@ export class TokenRepository {
     return model.save()
   }
 
-  async findOne(refresh_token: string): Promise<Token> {
-    return this.repo.findOne({where: {refresh_token}})
+  async findOne(user_id: number): Promise<Token> {
+    return this.repo.findOne({where: {user_id}})
   }
 
   async delete(refresh_token: string): Promise<number> {

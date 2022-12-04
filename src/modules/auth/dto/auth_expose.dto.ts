@@ -1,12 +1,20 @@
-import {Expose} from 'class-transformer'
+import {Expose, Type} from 'class-transformer'
+
+class UserMock {
+  @Expose() id: string
+  @Expose() email: string
+  @Expose() username: string
+  @Expose() image_url: string
+}
 
 export class AuthExposeDto {
+  @Type(() => UserMock)
   @Expose()
-  email: string
+  user: UserMock
 
   @Expose()
-  username: string
+  access_token: string
 
   @Expose()
-  image_url: string
+  refresh_token: string
 }
