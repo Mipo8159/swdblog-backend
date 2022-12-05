@@ -36,11 +36,15 @@ export class User extends Model<User, IUserAttrs> {
   password: string
 
   @ApiProperty({
-    example: 'abcd.s3.amazon.com',
+    example: 'bucket.s3.amazonaws.com/mock-image.jpg',
     description: "User's profile image",
   })
   @Column({type: DataType.STRING, unique: false, allowNull: true})
   image_url: string
+
+  @ApiProperty({example: true, description: "User's active status"})
+  @Column({type: DataType.BOOLEAN, defaultValue: true})
+  active: boolean
 
   @HasOne(() => Token)
   token: Token

@@ -49,9 +49,10 @@ export class UserService {
   }
 
   // REMOVE USER
-  async deleteUser(id: number): Promise<string> {
-    const res = await this.userRepository.deleteById(id)
-    if (res === 0) throw new NotFoundException('User not found')
-    return `user with id ${id} removed`
+  async toggleStatus(id: number): Promise<User> {
+    const user = await this.findUserById(id)
+    if (!user) throw new NotFoundException('User not found')
+    user.active = !user.active
+    return this.userRepository.save(user)
   }
 }

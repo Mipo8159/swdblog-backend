@@ -1,5 +1,11 @@
 import {Body, Controller, HttpCode, Post, Req, Res} from '@nestjs/common'
-import {ApiBody, ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger'
+import {
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiCookieAuth,
+} from '@nestjs/swagger'
 import {Request, Response} from 'express'
 
 import {AuthService} from '@app/modules/auth/auth.service'
@@ -12,11 +18,12 @@ import {
   authResponse,
   registerRequest,
   loginRequest,
-  invalidCredentials,
-  unauthorized,
   accessResponse,
-  emailTaken,
 } from '@app/helper/swagger/auth.swagger'
+import {
+  swagBadRequest,
+  swagUnauthorized,
+} from '@app/helper/util/swagger.exception'
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -29,7 +36,10 @@ export class AuthController {
   @ApiOperation({summary: 'REGISTER'})
   @ApiBody({schema: {example: registerRequest}})
   @ApiResponse({status: 200, schema: {example: authResponse}})
-  @ApiResponse({status: 400, schema: {example: emailTaken}})
+  @ApiResponse({
+    status: 400,
+    schema: {example: swagBadRequest('Email is taken')},
+  })
   async register(
     @Res({passthrough: true}) res: Response,
     @Body('register') dto: RegisterDto,
@@ -51,7 +61,10 @@ export class AuthController {
   @ApiOperation({summary: 'LOGIN'})
   @ApiBody({schema: {example: loginRequest}})
   @ApiResponse({status: 200, schema: {example: authResponse}})
-  @ApiResponse({status: 400, schema: {example: invalidCredentials}})
+  @ApiResponse({
+    status: 401,
+    schema: {example: swagBadRequest('Invalid credentials')},
+  })
   async login(
     @Res({passthrough: true}) res: Response,
     @Body('login') dto: LoginDto,
@@ -69,9 +82,16 @@ export class AuthController {
 
   // LOGOUT
   @Post('logout')
-  @ApiOperation({summary: 'LOGOUT'})
+  @ApiOperation({
+    summary: 'LOGOUT',
+    description: "CONSUMES A COOKIE => ('refresh_token') AND REMOVES IT.",
+  })
+  @ApiCookieAuth('refresh_token')
   @ApiResponse({status: 200, schema: {example: {message: 'logged out'}}})
-  @ApiResponse({status: 401, schema: {example: unauthorized}})
+  @ApiResponse({
+    status: 401,
+    schema: {example: swagUnauthorized('Unauthorized')},
+  })
   async logout(
     @Req() req: Request,
     @Res({passthrough: true}) res: Response,
@@ -85,9 +105,17 @@ export class AuthController {
   // REFRESH ACCESS
   @Post('refresh-access')
   @HttpCode(200)
-  @ApiOperation({summary: 'REFRESH ACCESS'})
+  @ApiOperation({
+    summary: 'REFRESH ACCESS',
+    description:
+      "CONSUMES A COOKIE => ('refresh_token') AND GENERATES A TOKEN => ('access_token').",
+  })
+  @ApiCookieAuth('refresh_token')
   @ApiResponse({status: 200, schema: {example: accessResponse}})
-  @ApiResponse({status: 401, schema: {example: unauthorized}})
+  @ApiResponse({
+    status: 401,
+    schema: {example: swagUnauthorized('Unauthorized')},
+  })
   async refreshAccess(
     @Req() req: Request,
     @Res({passthrough: true}) res: Response,

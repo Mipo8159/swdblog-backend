@@ -9,6 +9,7 @@ import {APP_PIPE} from '@nestjs/core'
 import {JoiValidation} from './config/joi.config'
 import {UserMiddleware} from './modules/user/middlewares/user.middleware'
 import {BackendValidationPipe} from './shared/pipes/validation.pipe'
+import * as cookieParser from 'cookie-parser'
 
 @Module({
   imports: [
@@ -35,6 +36,10 @@ import {BackendValidationPipe} from './shared/pipes/validation.pipe'
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(UserMiddleware).forRoutes('*')
+    consumer
+      .apply(cookieParser())
+      .forRoutes('*')
+      .apply(UserMiddleware)
+      .forRoutes('*')
   }
 }

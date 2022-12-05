@@ -3,10 +3,10 @@ import {
   Controller,
   Get,
   Put,
-  Delete,
   Body,
   Param,
   UseGuards,
+  Patch,
 } from '@nestjs/common'
 import {AuthGuard} from '@nestjs/passport'
 import {UpdateUserDto} from './dto/update_user.dto'
@@ -19,7 +19,19 @@ import {
   ApiParam,
   ApiResponse,
   ApiTags,
+  ApiBearerAuth,
+  ApiHeader,
+  ApiBody,
 } from '@nestjs/swagger'
+import {
+  updateUserRequest,
+  userResponse,
+} from '@app/helper/swagger/user.swagger'
+import {authHeader} from '@app/helper/swagger/auth.swagger'
+import {
+  swagBadRequest,
+  swagUnauthorized,
+} from '@app/helper/util/swagger.exception'
 
 @ApiTags('Users')
 @Controller('users')
@@ -28,53 +40,87 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   // FIND USER PROFILE
-  @ApiOperation({summary: 'Retrieve current user profile'})
-  @ApiResponse({status: 200, type: User, description: 'Retrieve profile'})
   @Get('profile')
   @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('access_token')
+  @ApiHeader({
+    name: 'Authorization',
+    required: true,
+    schema: {example: authHeader},
+  })
+  @ApiOperation({summary: 'FETCH PROFILE'})
+  @ApiResponse({status: 200, schema: {example: userResponse}})
+  @ApiResponse({
+    status: 401,
+    schema: {example: swagUnauthorized('Unauthorized')},
+  })
   findProfile(@UserDecorator('id') id: string): Promise<User> {
     return this.userService.findUserById(parseInt(id))
   }
 
   // FIND ONE BY ID
-  @ApiOperation({summary: 'Fetch user information by id'})
-  @ApiParam({name: 'id', required: true, type: Number, example: 1})
-  @ApiResponse({status: 200, type: User})
   @Get(':id')
   @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiHeader({
+    name: 'Authorization',
+    required: true,
+    schema: {example: authHeader},
+  })
+  @ApiOperation({summary: 'FIND USER'})
+  @ApiParam({name: 'id', required: true, type: Number, example: 1})
+  @ApiResponse({status: 200, schema: {example: userResponse}})
+  @ApiResponse({
+    status: 401,
+    schema: {example: swagUnauthorized('Unauthorized')},
+  })
+  @ApiResponse({
+    status: 400,
+    schema: {example: swagBadRequest('User not found')},
+  })
   findOneById(@Param('id') id: string): Promise<User> {
     return this.userService.findUserById(parseInt(id))
   }
 
   // UPDATE USER
-  @Put(':id')
-  @ApiParam({name: 'id', required: true, type: Number, example: 1})
-  @ApiOperation({summary: 'Update user information by ID'})
-  @ApiResponse({status: 200, type: User})
+  @Put()
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiHeader({
+    name: 'Authorization',
+    required: true,
+    schema: {example: authHeader},
+  })
+  @ApiOperation({summary: 'UPDATE CURRENT USER'})
+  @ApiBody({schema: {example: updateUserRequest}})
+  @ApiResponse({status: 200, schema: {example: userResponse}})
   @ApiResponse({
-    status: 404,
-    schema: {
-      example: {
-        statusCode: 404,
-        message: 'User not found',
-        error: 'Not Found',
-      },
-    },
+    status: 401,
+    schema: {example: swagUnauthorized('Unauthorized')},
   })
   update(
-    @Param('id') id: string,
+    @UserDecorator('id') id: string,
     @Body('user') dto: UpdateUserDto,
   ): Promise<User> {
     return this.userService.updateUser(parseInt(id), dto)
   }
 
-  // REMOVE USER
-  @ApiOperation({summary: 'Remove or Deactivate user by ID'})
-  @ApiParam({name: 'id', required: true, type: Number, example: 1})
-  @ApiResponse({status: 200, description: 'user with id 1 removed'})
-  @ApiResponse({status: 404, description: 'User not found'})
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.deleteUser(parseInt(id))
+  // TOGGLE USER ACTIVE STATUS
+  @Patch()
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiHeader({
+    name: 'Authorization',
+    required: true,
+    schema: {example: authHeader},
+  })
+  @ApiOperation({summary: 'TOGGLE CURRENT USER STATUS'})
+  @ApiResponse({status: 200, schema: {example: userResponse}})
+  @ApiResponse({
+    status: 401,
+    schema: {example: swagUnauthorized('Unauthorized')},
+  })
+  async toggleStatus(@UserDecorator('id') id: string): Promise<User> {
+    return this.userService.toggleStatus(parseInt(id))
   }
 }

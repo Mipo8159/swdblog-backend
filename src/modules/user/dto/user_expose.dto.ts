@@ -11,6 +11,9 @@ export class UserExposeDto {
   username: string
 
   @Expose()
+  active: boolean
+
+  @Expose()
   image_url: string
 
   @Expose()

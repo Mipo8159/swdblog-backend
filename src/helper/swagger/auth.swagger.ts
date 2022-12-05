@@ -2,8 +2,8 @@ export const authResponse = {
   user: {
     email: 'abc@a.com',
     username: 'abc',
-    password: 'abc123',
     image_url: 'bucket.s3.amazonaws.com/mock-image.jpg',
+    active: true,
   },
   access_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
 }
@@ -13,7 +13,7 @@ export const registerRequest = {
     email: 'abc@a.com',
     username: 'Mipo',
     password: '123123',
-    image_url: 'image.png',
+    image_url: 'bucket.s3.amazonaws.com/mock-image.jpg',
   },
 }
 
@@ -28,19 +28,4 @@ export const loginRequest = {
   },
 }
 
-export const emailTaken = {
-  statusCode: 400,
-  message: 'Email in taken',
-  error: 'Bad Request',
-}
-
-export const invalidCredentials = {
-  statusCode: 400,
-  message: 'Invalid credentials',
-  error: 'Bad Request',
-}
-
-export const unauthorized = {
-  statusCode: 401,
-  message: 'Unauthorized',
-}
+export const authHeader = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp...'

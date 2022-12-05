@@ -5,6 +5,7 @@ class UserMock {
   @Expose() email: string
   @Expose() username: string
   @Expose() image_url: string
+  @Expose() active: boolean
 }
 
 export class AuthExposeDto {
