@@ -1,11 +1,12 @@
 import {Injectable} from '@nestjs/common'
 import {ConfigService} from '@nestjs/config'
 import {JwtService} from '@nestjs/jwt'
-import {IJwtOptions} from './interfaces/jwt_options.interface'
-import {IJwtPayload} from './interfaces/jwt_payload.interface'
-import {IJwtResponse} from './interfaces/jwt_response.interface'
-import {Token} from './models/token.model'
-import {TokenRepository} from './repositories/token.repository'
+
+import {IJwtOptions} from '@app/modules/token/interfaces/jwt_options.interface'
+import {IJwtPayload} from '@app/modules/token/interfaces/jwt_payload.interface'
+import {IJwtResponse} from '@app/modules/token/interfaces/jwt_response.interface'
+import {Token} from '@app/modules/token/models/token.model'
+import {TokenRepository} from '@app/modules/token/repositories/token.repository'
 
 @Injectable()
 export class TokenService {

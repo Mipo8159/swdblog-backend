@@ -1,9 +1,10 @@
 import {PassportStrategy} from '@nestjs/passport'
 import {Injectable, UnauthorizedException} from '@nestjs/common'
 import {ExtractJwt, Strategy} from 'passport-jwt'
+import {ConfigService} from '@nestjs/config'
+
 import {IJwtPayload} from '@app/modules/token/interfaces/jwt_payload.interface'
 import {UserService} from '@app/modules/user/user.service'
-import {ConfigService} from '@nestjs/config'
 
 @Injectable()
 export class JwtStategy extends PassportStrategy(Strategy, 'jwt') {

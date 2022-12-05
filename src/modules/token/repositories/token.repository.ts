@@ -1,7 +1,8 @@
 import {Injectable} from '@nestjs/common'
 import {InjectModel} from '@nestjs/sequelize'
-import {Token} from '@app/modules/token/models/token.model'
 import {ModelCtor} from 'sequelize-typescript'
+
+import {Token} from '@app/modules/token/models/token.model'
 
 @Injectable()
 export class TokenRepository {

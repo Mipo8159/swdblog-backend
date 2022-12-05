@@ -1,4 +1,3 @@
-import {Attributes} from 'sequelize'
 import {Model} from 'sequelize-typescript'
 
 export interface IRepo<M extends Model> {

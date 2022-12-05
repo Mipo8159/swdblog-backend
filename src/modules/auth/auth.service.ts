@@ -3,13 +3,14 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common'
-import {LoginDto} from './dto/login.dto'
-import {RegisterDto} from './dto/register.dto'
 import * as bcrypt from 'bcrypt'
-import {UserService} from '../user/user.service'
-import {TokenService} from '../token/token.service'
-import {IAuthResponse} from './interfaces/auth.response.interface'
-import {IJwtResponse} from '../token/interfaces/jwt_response.interface'
+
+import {LoginDto} from '@app/modules/auth/dto/login.dto'
+import {RegisterDto} from '@app/modules/auth/dto/register.dto'
+import {UserService} from '@app/modules/user/user.service'
+import {TokenService} from '@app/modules/token/token.service'
+import {IAuthResponse} from '@app/modules/auth/interfaces/auth.response.interface'
+import {IJwtResponse} from '@app/modules/token/interfaces/jwt_response.interface'
 
 @Injectable()
 export class AuthService {

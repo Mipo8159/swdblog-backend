@@ -9,11 +9,6 @@ import {
   Patch,
 } from '@nestjs/common'
 import {AuthGuard} from '@nestjs/passport'
-import {UpdateUserDto} from './dto/update_user.dto'
-import {UserExposeDto} from './dto/user_expose.dto'
-import {User} from './models/user.model'
-import {UserService} from './user.service'
-import {UserDecorator} from '@app/modules/user/decorators/user.decorator'
 import {
   ApiOperation,
   ApiParam,
@@ -23,6 +18,12 @@ import {
   ApiHeader,
   ApiBody,
 } from '@nestjs/swagger'
+
+import {UpdateUserDto} from '@app/modules/user/dto/update_user.dto'
+import {UserExposeDto} from '@app/modules/user/dto/user_expose.dto'
+import {User} from '@app/modules/user/models/user.model'
+import {UserService} from '@app/modules/user/user.service'
+import {UserDecorator} from '@app/modules/user/decorators/user.decorator'
 import {
   updateUserRequest,
   userResponse,

@@ -1,5 +1,6 @@
 import {Column, DataType, HasOne, Table, Model} from 'sequelize-typescript'
 import {ApiProperty} from '@nestjs/swagger'
+
 import {Token} from '@app/modules/token/models/token.model'
 
 export interface IUserAttrs {

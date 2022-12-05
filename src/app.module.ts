@@ -1,15 +1,16 @@
 import {MiddlewareConsumer, Module} from '@nestjs/common'
 import {ConfigModule, ConfigService} from '@nestjs/config'
 import {SequelizeModule} from '@nestjs/sequelize'
-import {ConnectSequelize} from '@app/config/sequalize.config'
-import {UserModule} from './modules/user/user.module'
-import {TokenModule} from './modules/token/token.module'
-import {AuthModule} from './modules/auth/auth.module'
 import {APP_PIPE} from '@nestjs/core'
-import {JoiValidation} from './config/joi.config'
-import {UserMiddleware} from './modules/user/middlewares/user.middleware'
-import {BackendValidationPipe} from './shared/pipes/validation.pipe'
 import * as cookieParser from 'cookie-parser'
+
+import {ConnectSequelize} from '@app/config/sequalize.config'
+import {UserModule} from '@app/modules/user/user.module'
+import {TokenModule} from '@app/modules/token/token.module'
+import {AuthModule} from '@app/modules/auth/auth.module'
+import {JoiValidation} from '@app/config/joi.config'
+import {UserMiddleware} from '@app/modules/user/middlewares/user.middleware'
+import {BackendValidationPipe} from '@app/shared/pipes/validation.pipe'
 
 @Module({
   imports: [

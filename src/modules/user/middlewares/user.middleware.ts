@@ -1,6 +1,7 @@
 import {JwtService} from '@nestjs/jwt'
 import {Injectable, NestMiddleware} from '@nestjs/common'
 import {NextFunction, Request, Response} from 'express'
+
 import {UserService} from '@app/modules/user/user.service'
 import {IJwtPayload} from '@app/modules/token/interfaces/jwt_payload.interface'
 

@@ -2,6 +2,7 @@ import {Injectable} from '@nestjs/common'
 import {InjectModel} from '@nestjs/sequelize'
 import {ModelCtor} from 'sequelize-typescript'
 import {Op} from 'sequelize'
+
 import {IRepo} from '@app/shared/interfaces/repository.interface'
 import {User} from '@app/modules/user/models/user.model'
 

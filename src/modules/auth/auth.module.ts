@@ -1,12 +1,13 @@
 import {ConfigService} from '@nestjs/config'
 import {Module} from '@nestjs/common'
+import {JwtModule} from '@nestjs/jwt'
+
 import {AuthController} from '@app/modules/auth/auth.controller'
 import {AuthService} from '@app/modules/auth/auth.service'
-import {UserModule} from '../user/user.module'
-import {TokenModule} from '../token/token.module'
-import {JwtModule} from '@nestjs/jwt'
+import {UserModule} from '@app/modules/user/user.module'
+import {TokenModule} from '@app/modules/token/token.module'
 import {JwtConfig} from '@app/config/jwt.config'
-import {JwtStategy} from './strategies/jwt.strategy'
+import {JwtStategy} from '@app/modules/auth/strategies/jwt.strategy'
 
 @Module({
   imports: [

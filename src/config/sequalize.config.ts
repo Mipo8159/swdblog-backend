@@ -3,6 +3,7 @@ import {SequelizeModuleOptions} from '@nestjs/sequelize'
 import {Sequelize} from 'sequelize-typescript'
 import * as dotenv from 'dotenv'
 import * as fs from 'fs'
+
 import {User} from '@app/modules/user/models/user.model'
 import {Token} from '@app/modules/token/models/token.model'
 
